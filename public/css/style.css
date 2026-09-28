@@ -1,0 +1,482 @@
+/* Pencil-Sketch Notebook Art Direction for TypeFight */
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Patrick+Hand&display=swap');
+
+:root {
+  --paper-bg: #f8f4eb;
+  --paper-dark: #eee8d8;
+  --pencil-black: #1d1c1a;
+  --pencil-lead: #3a3835;
+  --pencil-light: #7c776e;
+  --pencil-red: #c03838;
+  --pencil-blue: #325a88;
+  --pencil-yellow: #d89f28;
+  --font-hand: 'Patrick Hand', cursive, sans-serif;
+  --font-sketch: 'Architects Daughter', cursive, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: #2b2824;
+  color: var(--pencil-black);
+  font-family: var(--font-hand);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-image:
+    radial-gradient(#3a3630 15%, transparent 16%),
+    radial-gradient(#3a3630 15%, transparent 16%);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+}
+
+/* Notebook Container Frame */
+.notebook-container {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--paper-bg);
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(180, 160, 130, 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 3px solid #222;
+}
+
+/* Battle Canvas */
+#battle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 540px;
+  display: block;
+  z-index: 1;
+}
+
+/* UI Layer Over Canvas */
+.ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ui-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.ui-screen.hidden,
+.modal.hidden,
+.sketch-alert.hidden {
+  display: none !important;
+}
+
+/* Hand-Drawn Sketchy Title & Headings */
+.sketch-title {
+  font-family: var(--font-sketch);
+  font-size: 5rem;
+  letter-spacing: 4px;
+  color: var(--pencil-black);
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.15), -1px -1px 0px rgba(255,255,255,0.8);
+  margin-bottom: 2px;
+  transform: rotate(-1.5deg);
+}
+
+.sketch-subtitle {
+  font-size: 1.5rem;
+  letter-spacing: 6px;
+  color: var(--pencil-light);
+  margin-bottom: 28px;
+  border-bottom: 2px dashed var(--pencil-light);
+  padding-bottom: 4px;
+}
+
+.menu-card {
+  background: rgba(248, 244, 235, 0.94);
+  padding: 30px 48px;
+  border-radius: 6px;
+  border: 2.5px solid var(--pencil-black);
+  box-shadow: 5px 6px 0px rgba(35, 33, 31, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transform: rotate(0.4deg);
+}
+
+.menu-card h2 {
+  font-family: var(--font-sketch);
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+}
+
+/* Sketch Buttons */
+.sketch-btn {
+  background: transparent;
+  color: var(--pencil-black);
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 10px 28px;
+  border: 2.5px solid var(--pencil-black);
+  border-radius: 4px 18px 5px 22px / 20px 4px 22px 5px; /* organic hand-drawn sketchy border */
+  cursor: pointer;
+  box-shadow: 3px 3px 0px rgba(30, 28, 26, 0.75);
+  transition: all 0.12s ease;
+  position: relative;
+  outline: none;
+}
+
+.sketch-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 5px 5px 0px rgba(30, 28, 26, 0.9);
+  background: #fdfbf7;
+}
+
+.sketch-btn:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px rgba(30, 28, 26, 0.9);
+}
+
+.sketch-btn-danger {
+  border-color: var(--pencil-red);
+  color: var(--pencil-red);
+}
+
+.sketch-btn-danger:hover {
+  background: #fff3f3;
+}
+
+.btn-group {
+  display: flex;
+  gap: 14px;
+}
+
+/* In-Game Word Display (Floating above characters) */
+.word-bubble-container {
+  position: absolute;
+  top: 170px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 130px;
+  pointer-events: none;
+}
+
+.word-bubble {
+  background: rgba(255, 255, 255, 0.94);
+  border: 2.5px solid var(--pencil-black);
+  border-radius: 6px 14px 4px 12px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  padding: 8px 24px;
+  font-family: var(--font-sketch);
+  font-size: 2.4rem;
+  letter-spacing: 4px;
+  min-width: 180px;
+  text-align: center;
+  position: relative;
+  transform: rotate(-1deg);
+}
+
+.word-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 12px 10px 0;
+  border-style: solid;
+  border-color: var(--pencil-black) transparent transparent;
+  display: block;
+  width: 0;
+}
+
+/* Letter Highlighting inside Word Bubble */
+.char-correct {
+  color: #1a1918;
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: #2b7a35;
+}
+
+.char-current {
+  color: #242220;
+  background: #ffe394;
+  padding: 0 2px;
+  border-radius: 2px;
+  animation: pulseCaret 0.8s infinite alternate;
+}
+
+.char-error {
+  color: #c02424;
+  background: #ffb8b8;
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+}
+
+.char-pending {
+  color: #8c867c;
+  opacity: 0.75;
+}
+
+@keyframes pulseCaret {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* In-Game HUD Elements */
+.hud-metrics {
+  position: absolute;
+  top: 68px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 110px;
+  pointer-events: none;
+}
+
+.hud-panel {
+  display: flex;
+  gap: 16px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: var(--pencil-lead);
+  background: rgba(248, 244, 235, 0.85);
+  padding: 4px 14px;
+  border: 1.5px dashed var(--pencil-light);
+  border-radius: 4px;
+}
+
+.hud-combo-high {
+  color: var(--pencil-red) !important;
+  font-weight: 900;
+  animation: bounceCombo 0.4s infinite alternate;
+}
+
+@keyframes bounceCombo {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+}
+
+/* Dynamic Sketch Alerts (COMBO BROKEN!) */
+.sketch-alert {
+  position: absolute;
+  top: 270px;
+  font-family: var(--font-sketch);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--pencil-red);
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid var(--pencil-red);
+  padding: 6px 18px;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0px rgba(180, 40, 40, 0.6);
+  pointer-events: none;
+}
+
+.alert-p1 {
+  left: 170px;
+  transform: rotate(-3deg);
+}
+
+.alert-p2 {
+  right: 170px;
+  transform: rotate(3deg);
+}
+
+.sketch-alert-pop {
+  animation: alertPop 0.8s forwards;
+}
+
+@keyframes alertPop {
+  0% { transform: scale(0.6) translateY(0); opacity: 0; }
+  30% { transform: scale(1.15) translateY(-8px); opacity: 1; }
+  70% { transform: scale(1) translateY(-14px); opacity: 1; }
+  100% { transform: scale(0.9) translateY(-25px); opacity: 0; }
+}
+
+/* Pre-Battle Countdown (3, 2, 1, FIGHT!) */
+.countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.countdown-anim {
+  font-family: var(--font-sketch);
+  font-size: 7.5rem;
+  font-weight: 900;
+  color: var(--pencil-red);
+  text-shadow: 4px 4px 0px rgba(20, 20, 20, 0.85);
+  animation: countdownPop 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(0.2) rotate(-8deg); opacity: 0; }
+  50% { transform: scale(1.3) rotate(3deg); opacity: 1; }
+  80% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.1) rotate(2deg); opacity: 0.2; }
+}
+
+/* Modals */
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 28, 25, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: var(--paper-bg);
+  border: 3px solid var(--pencil-black);
+  border-radius: 6px;
+  box-shadow: 8px 10px 0px rgba(20, 20, 20, 0.8);
+  padding: 32px 40px;
+  max-width: 650px;
+  width: 90%;
+  max-height: 88%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-content h2 {
+  font-family: var(--font-sketch);
+  font-size: 2.4rem;
+  margin-bottom: 16px;
+  border-bottom: 2px dashed var(--pencil-lead);
+  padding-bottom: 6px;
+}
+
+.modal-content p, .modal-content li {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: var(--pencil-lead);
+}
+
+.modal-content ul {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+
+/* Game Over Stats Table */
+.stats-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.player-stats-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--pencil-black);
+  padding: 14px 18px;
+  border-radius: 4px;
+}
+
+.player-stats-card h3 {
+  font-family: var(--font-sketch);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  border-bottom: 1.5px solid var(--pencil-black);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
+}
+
+.stat-val {
+  font-weight: bold;
+  color: var(--pencil-black);
+}
+
+/* Online Room Inputs */
+.sketch-input {
+  font-family: var(--font-sketch);
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 16px;
+  border: 2.5px solid var(--pencil-black);
+  background: #fff;
+  border-radius: 4px;
+  width: 220px;
+  outline: none;
+}
+
+.room-code-tag {
+  font-family: var(--font-sketch);
+  font-size: 2.8rem;
+  letter-spacing: 6px;
+  color: var(--pencil-blue);
+  background: #fff;
+  padding: 4px 20px;
+  border: 2px dashed var(--pencil-blue);
+  margin-bottom: 10px;
+}
+
+.ready-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 20px;
+  width: 100%;
+}
+
+.ready-item {
+  font-size: 1.4rem;
+  padding: 6px 14px;
+  border: 1.5px solid var(--pencil-light);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  justify-content: space-between;
+}
+
+.ready-item.is-ready {
+  border-color: #2b7a35;
+  color: #2b7a35;
+  font-weight: bold;
+}

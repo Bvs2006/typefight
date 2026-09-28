@@ -1,0 +1,24 @@
+{
+  "name": "typefight",
+  "version": "1.0.0",
+  "description": "1v1 Pencil-Sketch Typing Battle Game",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node tests/combatTest.js && node tests/networkTest.js"
+  },
+  "keywords": [
+    "typing",
+    "fighting",
+    "game",
+    "pencil-sketch",
+    "multiplayer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.4"
+  }
+}

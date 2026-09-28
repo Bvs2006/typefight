@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeFight — 1v1 Pencil-Sketch Typing Battle</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Notebook Sketchbook Container -->
+  <div class="notebook-container">
+    <!-- 2D Canvas Arena -->
+    <canvas id="battle-canvas" width="960" height="540"></canvas>
+
+    <!-- UI Overlay Layer -->
+    <div class="ui-layer">
+
+      <!-- 1. MAIN MENU -->
+      <div id="screen-main-menu" class="ui-screen">
+        <h1 class="sketch-title">TYPEFIGHT</h1>
+        <p class="sketch-subtitle">TYPE FAST. STRIKE FIRST.</p>
+
+        <div class="menu-card">
+          <button id="btn-menu-offline" class="sketch-btn">OFFLINE BATTLE</button>
+          <button id="btn-menu-online" class="sketch-btn">ONLINE BATTLE (1v1)</button>
+          <button id="btn-menu-howto" class="sketch-btn">HOW TO PLAY</button>
+          <button id="btn-menu-settings" class="sketch-btn">SETTINGS</button>
+        </div>
+      </div>
+
+      <!-- 2. OFFLINE MENU -->
+      <div id="screen-offline-menu" class="ui-screen hidden">
+        <div class="menu-card">
+          <h2>OFFLINE BATTLE</h2>
+          <p style="font-size: 1.2rem; color: #666; margin-bottom: 6px;">Select battle configuration:</p>
+
+          <p style="font-weight: bold; margin-top: 6px;">PLAYER VS AI</p>
+          <div class="btn-group">
+            <button class="sketch-btn btn-ai-start" data-diff="easy">EASY</button>
+            <button class="sketch-btn btn-ai-start" data-diff="normal">NORMAL</button>
+            <button class="sketch-btn btn-ai-start" data-diff="hard">HARD</button>
+          </div>
+
+          <div style="width: 100%; border-bottom: 1.5px dashed #aaa; margin: 8px 0;"></div>
+
+          <p style="font-weight: bold;">SAME KEYBOARD (1v1)</p>
+          <button id="btn-start-split" class="sketch-btn" style="width: 100%;">
+            SPLIT KEYBOARD MODE
+          </button>
+          <p style="font-size: 0.95rem; color: #555; text-align: center;">
+            P1 (Left hand): Q W E R T A S D F G Z X C V B<br>
+            P2 (Right hand): Y U I O P H J K L N M
+          </p>
+
+          <div style="margin-top: 10px;">
+            <button id="btn-back-offline" class="sketch-btn sketch-btn-danger">BACK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ONLINE MENU -->
+      <div id="screen-online-menu" class="ui-screen hidden">
+        <div class="menu-card">
+          <h2>ONLINE 1v1 BATTLE</h2>
+          <p style="font-size: 1.15rem; color: #555; margin-bottom: 10px;">Play against a friend online with a room code.</p>
+
+          <button id="btn-create-room" class="sketch-btn" style="width: 100%;">CREATE ROOM</button>
+
+          <div style="width: 100%; border-bottom: 1.5px dashed #aaa; margin: 10px 0;"></div>
+
+          <p style="font-weight: bold;">JOIN EXISTING ROOM</p>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="input-room-code" class="sketch-input" placeholder="X7K4P" maxlength="5">
+            <button id="btn-join-room" class="sketch-btn">JOIN</button>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <button id="btn-back-online" class="sketch-btn sketch-btn-danger">BACK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. ROOM WAITING LOBBY -->
+      <div id="screen-room-waiting" class="ui-screen hidden">
+        <div class="menu-card" style="min-width: 440px;">
+          <h2>ROOM LOBBY</h2>
+          <div id="display-room-code" class="room-code-tag">------</div>
+          <button id="btn-copy-code" class="sketch-btn" style="font-size: 1.1rem; padding: 4px 14px; margin-bottom: 12px;">COPY CODE</button>
+
+          <div id="ready-status-list" class="ready-list">
+            <!-- Populated dynamically -->
+          </div>
+
+          <p id="room-status-text" style="font-size: 1.1rem; color: #666; margin-bottom: 14px;">Waiting for opponent...</p>
+
+          <div class="btn-group">
+            <button id="btn-ready-up" class="sketch-btn">READY UP</button>
+            <button id="btn-leave-room" class="sketch-btn sketch-btn-danger">LEAVE</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. IN-GAME BATTLE HUD -->
+      <div id="screen-battle-hud" class="ui-screen hidden" style="pointer-events: none;">
+        <!-- Top Metrics Panels -->
+        <div class="hud-metrics">
+          <div class="hud-panel">
+            <span>WPM: <b id="hud-wpm-1">0</b></span>
+            <span>ACC: <b id="hud-acc-1">100%</b></span>
+            <span>COMBO: <b id="hud-combo-1">x0</b></span>
+          </div>
+
+          <div class="hud-panel">
+            <span>WPM: <b id="hud-wpm-2">0</b></span>
+            <span>ACC: <b id="hud-acc-2">100%</b></span>
+            <span>COMBO: <b id="hud-combo-2">x0</b></span>
+          </div>
+        </div>
+
+        <!-- Floating Target Words (Positioned directly above pencil fighters) -->
+        <div class="word-bubble-container">
+          <div id="word-display-1" class="word-bubble">
+            <!-- Dynamic word letters -->
+          </div>
+
+          <div id="word-display-2" class="word-bubble">
+            <!-- Dynamic word letters -->
+          </div>
+        </div>
+
+        <!-- Dynamic Alerts (Combo Broken!) -->
+        <div id="combo-alert-1" class="sketch-alert alert-p1 hidden">COMBO BROKEN!</div>
+        <div id="combo-alert-2" class="sketch-alert alert-p2 hidden">COMBO BROKEN!</div>
+      </div>
+
+    </div>
+
+    <!-- Pre-Battle Countdown Overlay -->
+    <div id="countdown-overlay" class="countdown-overlay hidden">
+      <div id="countdown-text" class="countdown-anim">3</div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-how-to-play" class="modal hidden">
+      <div class="modal-content">
+        <h2>HOW TO PLAY TYPEFIGHT</h2>
+        <p>TypeFight is a 1v1 typing combat duel drawn inside a notebook.</p>
+        <ul>
+          <li><b>Typing Speed:</b> Faster typing delivers faster attack animations and adds up to +12 bonus damage.</li>
+          <li><b>Accuracy:</b> Maintaining 95%+ accuracy grants a <b>1.25x damage multiplier</b>!</li>
+          <li><b>Combos:</b> Consecutive correct words increase your combo multiplier up to <b>1.5x damage</b>.</li>
+          <li><b>Mistakes:</b> Mistyped letters break your combo streak!</li>
+          <li><b>Win Condition:</b> Deplete your opponent's 100 HP to 0 to claim victory.</li>
+        </ul>
+        <p><b>Offline PvP:</b> In Same Keyboard mode, Player 1 types with left-hand keys and Player 2 with right-hand keys.</p>
+        <button id="btn-close-howto" class="sketch-btn" style="float: right;">GOT IT!</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="modal hidden">
+      <div class="modal-content" style="max-width: 480px;">
+        <h2>GAME SETTINGS</h2>
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 1.3rem; display: block; margin-bottom: 8px;">Sound Volume:</label>
+          <input type="range" id="setting-volume" min="0" max="1" step="0.05" value="0.8" style="width: 100%; cursor: pointer;">
+        </div>
+        <div style="margin-bottom: 24px;">
+          <button id="btn-toggle-sound" class="sketch-btn" style="width: 100%;">MUTE SOUND</button>
+        </div>
+        <button id="btn-close-settings" class="sketch-btn" style="float: right;">SAVE & CLOSE</button>
+      </div>
+    </div>
+
+    <!-- GAME OVER / RESULTS MODAL -->
+    <div id="modal-game-over" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="game-over-title">PLAYER 1 WINS!</h2>
+        <p id="game-over-subtitle" style="font-size: 1.2rem; color: #555;">Battle Duration: 42s</p>
+
+        <div class="stats-comparison">
+          <!-- Player 1 Stats -->
+          <div class="player-stats-card">
+            <h3>PLAYER 1</h3>
+            <div class="stat-row"><span>Average WPM:</span><span id="stat-wpm-1" class="stat-val">74</span></div>
+            <div class="stat-row"><span>Accuracy:</span><span id="stat-acc-1" class="stat-val">96%</span></div>
+            <div class="stat-row"><span>Total Words:</span><span id="stat-words-1" class="stat-val">8</span></div>
+            <div class="stat-row"><span>Max Combo:</span><span id="stat-combo-1" class="stat-val">x5</span></div>
+            <div class="stat-row"><span>Total Damage:</span><span id="stat-dmg-1" class="stat-val">102 HP</span></div>
+          </div>
+
+          <!-- Player 2 Stats -->
+          <div class="player-stats-card">
+            <h3>PLAYER 2</h3>
+            <div class="stat-row"><span>Average WPM:</span><span id="stat-wpm-2" class="stat-val">58</span></div>
+            <div class="stat-row"><span>Accuracy:</span><span id="stat-acc-2" class="stat-val">91%</span></div>
+            <div class="stat-row"><span>Total Words:</span><span id="stat-words-2" class="stat-val">6</span></div>
+            <div class="stat-row"><span>Max Combo:</span><span id="stat-combo-2" class="stat-val">x3</span></div>
+            <div class="stat-row"><span>Total Damage:</span><span id="stat-dmg-2" class="stat-val">64 HP</span></div>
+          </div>
+        </div>
+
+        <div class="btn-group" style="justify-content: center; margin-top: 14px;">
+          <button id="btn-rematch" class="sketch-btn">REMATCH</button>
+          <button id="btn-gameover-menu" class="sketch-btn sketch-btn-danger">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Socket.IO library from server -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/words.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/sketchRenderer.js"></script>
+  <script src="js/typing.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/network.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
